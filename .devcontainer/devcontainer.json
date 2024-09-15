@@ -1,15 +1,17 @@
 {
-    "name": "PyTorch + PyG Development Container",
-    "dockerFile": "Dockerfile",
-    "settings": {
-      "python.pythonPath": "/usr/local/bin/python",
-      "terminal.integrated.shell.linux": "/bin/bash"
-    },
-    "extensions": [
-      "ms-python.python",
-      "ms-azuretools.vscode-docker"
-    ],
-    "postCreateCommand": "pip install -r requirements.txt",
-    "remoteUser": "vscode"
-  }
-  
+  "name": "PyTorch + PyG Development Container",
+  "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."  // Set the context to the project root
+  },
+  "settings": {
+    "python.pythonPath": "/usr/local/bin/python",
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ms-python.python",
+    "ms-azuretools.vscode-docker"
+  ],
+  "postCreateCommand": "pip install -r requirements.txt",
+  "remoteUser": "vscode"
+}
