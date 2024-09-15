@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 # Upgrade pip and install torch separately to avoid conflicts
 RUN pip install --upgrade pip \
-    && pip install torch==1.12.0+cpu
+    && pip install torch==1.12.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
 # Install the rest of the dependencies
 RUN pip install \
