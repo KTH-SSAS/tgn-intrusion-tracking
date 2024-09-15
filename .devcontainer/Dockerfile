@@ -1,18 +1,20 @@
-# Base image with Python
+# Use the official Python image as the base image
 FROM python:3.10
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /workspace
 
-# Install system dependencies
+# Update and install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Upgrade pip and install torch separately to avoid conflicts
 RUN pip install --upgrade pip \
-    && pip install \
-    torch==1.12.0+cpu \
+    && pip install torch==1.12.0+cpu
+
+# Install the rest of the dependencies
+RUN pip install \
     torchvision==0.13.0+cpu \
     torchaudio==0.12.0+cpu \
     pyg_lib \
@@ -26,5 +28,5 @@ RUN pip install --upgrade pip \
     -f https://download.pytorch.org/whl/torch_stable.html \
     -f https://data.pyg.org/whl/torch-1.12.0+cpu.html
 
-# Set default shell to bash
-SHELL ["/bin/bash", "-c"]
+# Specify a default command to prevent the container from exiting immediately
+CMD ["bash"]
