@@ -4,6 +4,8 @@ FROM python:3.10
 # Set the working directory in the container
 WORKDIR /workspace
 
+RUN useradd -ms /bin/bash vscode
+
 # Update and install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
