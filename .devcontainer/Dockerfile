@@ -4,6 +4,7 @@ FROM python:3.6
 # Set the working directory in the container
 WORKDIR /workspace
 
+RUN useradd -m vscode
 
 # Update and install system dependencies
 RUN apt-get update && apt-get install -y \
