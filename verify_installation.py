@@ -1,36 +1,30 @@
+# Verify torch-geometric-temporal installation
 import torch
-from torch_geometric.data import Data
-from torch_geometric_temporal.nn import TGNMemory, TemporalConv
-import torch_geometric_temporal
+import numpy as np  # Add NumPy
+from torch_geometric_temporal.nn.recurrent import GConvGRU
+from torch_geometric_temporal.signal import temporal_signal_split, StaticGraphTemporalSignal
 
-def main():
-    print("PyTorch Version:", torch.__version__)
-    print("PyTorch Geometric Version:", torch_geometric_temporal.__version__)
+# Create a simple synthetic dataset
+node_features = [torch.rand(5, 4) for _ in range(10)]  # 10 time steps, 5 nodes, 4 features
+edges = torch.tensor([[0, 1, 2, 3], [1, 2, 3, 4]])  # Edge indices
+edge_weights = torch.rand(4)  # Weights for the edges
 
-    # Check if CUDA is available
-    if torch.cuda.is_available():
-        print("CUDA is available. PyTorch will use the GPU.")
-    else:
-        print("CUDA is not available. PyTorch will use the CPU.")
+# Change targets to NumPy arrays instead of PyTorch tensors
+targets = [np.random.rand(5).astype(np.float32) for _ in range(10)]  # Targets for each time step
 
-    # Create a simple graph data object
-    edge_index = torch.tensor([[0, 1, 2], [1, 2, 0]], dtype=torch.long)
-    x = torch.tensor([[1], [2], [3]], dtype=torch.float)
-    data = Data(x=x, edge_index=edge_index)
+# Create a StaticGraphTemporalSignal object
+dataset = StaticGraphTemporalSignal(edge_index=edges, edge_weight=edge_weights, features=node_features, targets=targets)
 
-    print("Graph Data:", data)
+# Split the dataset into train and test sets
+train_dataset, test_dataset = temporal_signal_split(dataset, train_ratio=0.8)
 
-    # Initialize a simple Temporal Conv layer
-    try:
-        conv = TemporalConv(
-            node_features=1,
-            edge_features=1,
-            memory=10,
-            hidden_channels=16
-        )
-        print("TemporalConv layer initialized successfully.")
-    except Exception as e:
-        print("Error initializing TemporalConv layer:", e)
+# Create a simple model using GConvGRU
+model = GConvGRU(in_channels=4, out_channels=2, K=2)
 
-if __name__ == "__main__":
-    main()
+# Perform a forward pass on one snapshot of the dataset
+snapshot = next(iter(train_dataset))
+x, edge_index, edge_weight = snapshot.x, snapshot.edge_index, snapshot.edge_weight
+
+# Forward pass
+out = model(x, edge_index, edge_weight)
+print("Output shape:", out.shape)
