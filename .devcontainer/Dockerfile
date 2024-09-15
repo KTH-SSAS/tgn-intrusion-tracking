@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY ../requirements.txt .
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html -f https://data.pyg.org/whl/torch-1.12.0+cpu.html
 
