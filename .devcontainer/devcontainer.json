@@ -1,0 +1,26 @@
+{
+    "name": "PyTorch Geometric Temporal Environment",
+    "image": "mcr.microsoft.com/vscode/devcontainers/python:3.10", 
+    "features": {
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.10"
+        }
+    },
+    "settings": {
+        "python.pythonPath": "/usr/local/bin/python",
+        "python.formatting.provider": "black",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.linting.flake8Enabled": true
+    },
+    "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode"
+    ],
+    "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt",
+    "forwardPorts": [],
+    "remoteUser": "vscode"
+}
