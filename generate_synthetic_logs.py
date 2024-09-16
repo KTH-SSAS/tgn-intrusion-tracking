@@ -31,7 +31,7 @@ def generate_random_timestamp(start_date, end_date):
     random_seconds = random.randint(0, int(delta.total_seconds()))
     return start_date + timedelta(seconds=random_seconds)
 
-def generate_log_entries(num_entries, users, service_accounts, projects, buckets, data_objects, instances):
+def generate_log_entries(num_entries, users, service_accounts, projects, buckets, data_objects, instances, malicious_probability):
     principals = users + service_accounts
     actions = list(ACTIONS.keys())
     logs = []
@@ -58,11 +58,16 @@ def generate_log_entries(num_entries, users, service_accounts, projects, buckets
             resource = 'unknown_resource'
         
         timestamp = generate_random_timestamp(start_date, end_date).isoformat() + 'Z'
+
+        # Assign label based on malicious_probability
+        label = 'malicious' if random.random() < malicious_probability else 'benign'
+
         logs.append({
             'timestamp': timestamp,
             'principal': principal,
             'action': action,
-            'resource': resource
+            'resource': resource,
+            'label': label
         })
     
     return logs
@@ -76,6 +81,7 @@ def main():
     parser.add_argument('--num_data_objects', type=int, default=100, help='Number of data objects')
     parser.add_argument('--num_instances', type=int, default=50, help='Number of instances')
     parser.add_argument('--num_log_entries', type=int, default=10000, help='Number of log entries to generate')
+    parser.add_argument('--malicious_probability', type=float, default=0.05, help='Probability that a log entry is malicious')
     parser.add_argument('--output', type=str, default='synthetic_logs.csv', help='Output CSV file name')
     
     args = parser.parse_args()
@@ -97,13 +103,14 @@ def main():
         projects,
         buckets,
         data_objects,
-        instances
+        instances,
+        args.malicious_probability
     )
     
     # Create DataFrame and save to CSV
     df = pd.DataFrame(logs)
     df.to_csv(args.output, index=False)
     print(f'Successfully generated {args.num_log_entries} log entries and saved to {args.output}')
-
+    
 if __name__ == '__main__':
     main()
